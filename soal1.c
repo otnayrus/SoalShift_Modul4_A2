@@ -68,11 +68,16 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset, stru
 	else sprintf(fpath, "%s%s",dirpath,path);
 	int res = 0;
   	int fd = 0 ;
+	char src[100],dst[100];
 
 	(void) fi;
 
-	if(strstr(fpath,".txt")!=NULL||strstr(fpath,".pdf")!=NULL||strstr(fpath,".doc")!=NULL){
+	if((strstr(fpath,".txt")!=NULL||strstr(fpath,".pdf")!=NULL||strstr(fpath,".doc")!=NULL)&&strstr(fpath,".ditandai")==NULL){
 	system("zenity --error --text='Terjadi kesalahan! File berisi konten berbahaya.'");
+	sprintf(src,"%s",fpath);
+	sprintf(dst,"%s.ditandai",src);
+	int rnm = rename(src,dst);
+	if(rnm == -1) return -errno;
 	return -1;
 	}
 
@@ -87,6 +92,7 @@ else {
 }
 	return res;
 }
+
 
 
 static struct fuse_operations xmp_oper = {
