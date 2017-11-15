@@ -83,6 +83,14 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
  	int fd = 0 ;
 
 	(void) fi;
+
+	if(strstr(fpath,".copy")!=NULL){
+	  system("zenity --error --text='File yang anda buka adalah file hasil salinan. File tidak bisa diubah maupun disalin kembali!'");
+	  int chm = chmod(fpath,000);
+	  if(chm == -1) return -errno;
+	  return -1;
+	}
+else {
 	fd = open(fpath, O_RDONLY);
 	if (fd == -1) return -errno;
 
@@ -90,6 +98,7 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	if (res == -1) res = -errno;
 
 	close(fd);
+}
 	return res;
 }
 
