@@ -128,6 +128,12 @@ off_t offset, struct fuse_file_info *fi)
 	if (res == -1)
 		res = -errno;
 	close(fd);
+	
+	char cppath[100];
+	sprintf(cppath,"%s.copy",newpath);
+	int rnm = rename(newpath,cppath);
+	if (rnm==-1) return -errno;
+
 	return res;
 }
 
