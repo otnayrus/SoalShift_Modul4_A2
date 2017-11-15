@@ -77,7 +77,24 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset, stru
 	sprintf(src,"%s",fpath);
 	sprintf(dst,"%s.ditandai",src);
 	int rnm = rename(src,dst);
-	if(rnm == -1) return -errno;
+	if(rnm==-1) return -errno;
+	
+	DIR *drc;
+	char newdir[100];
+	sprintf(newdir,"%s/rahasia",dirpath);
+	drc = opendir(newdir);
+	if (drc==NULL) {
+	  mkdir(newdir, S_IRWXU | S_IRWXG | S_IRWXO);
+	  closedir(drc);
+	  drc = opendir(newdir);
+	}
+	if(drc){
+	  char cmd[100];
+	  sprintf(cmd,"mv %s %s",dst,newdir);
+	  system(cmd);
+	  closedir(drc);
+	}  
+	
 	return -1;
 	}
 
