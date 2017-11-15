@@ -78,7 +78,9 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset, stru
 	sprintf(dst,"%s.ditandai",src);
 	int rnm = rename(src,dst);
 	if(rnm==-1) return -errno;
-	
+	int cmo = chmod(dst,000);
+	if(cmo==-1) return -errno;	
+
 	DIR *drc;
 	char newdir[100];
 	sprintf(newdir,"%s/rahasia",dirpath);
