@@ -89,13 +89,33 @@ off_t offset, struct fuse_file_info *fi)
 	int res;
 	(void) fi;
 
-	fd = open(path, O_WRONLY);
+	//make & check dir
+	DIR *drc;
+	char newdir[100];
+	sprintf(newdir,"%s/simpanan",dirpath);
+	drc = opendir(newdir);
+	if (drc==NULL) {
+	  mkdir(newdir, S_IRWXU | S_IRWXG | S_IRWXO);
+	  closedir(drc);
+	  drc = opendir(newdir);
+	}
+	if(drc){
+	  char cmd[100];
+	  sprintf(cmd,"cp %s%s %s%s", dirpath, path, newdir, path);
+	  system(cmd);
+	  closedir(drc);
+	}
+	else return -errno;  	
+
+	char newpath[100];
+	sprintf(newpath,"%s%s",newdir,path);
+
+	fd = open(newpath, O_WRONLY);
 	if (fd == -1)
 		return -errno;
 	res = pwrite(fd, buf, size, offset);
 	if (res == -1)
 		res = -errno;
-
 	close(fd);
 	return res;
 }
