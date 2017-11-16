@@ -57,6 +57,13 @@ static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_
 	return 0;
 }
 
+//return ext file
+const char * file_ext (const char *fname){
+	const char *dot = strrchr(fname,'.');
+	if( !dot || dot == fname) return "";
+	return dot;
+}
+
 static int xmp_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
 {
   char fpath[1000];
@@ -72,7 +79,7 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset, stru
 
 	(void) fi;
 
-	if((strstr(fpath,".txt")!=NULL||strstr(fpath,".pdf")!=NULL||strstr(fpath,".doc")!=NULL)&&strstr(fpath,".ditandai")==NULL){
+	if(strcmp(file_ext(fpath),".txt")==0||strcmp(file_ext(fpath),".pdf")==0||strcmp(file_ext(fpath),".doc")==0){
 	system("zenity --error --text='Terjadi kesalahan! File berisi konten berbahaya.'");
 	sprintf(src,"%s",fpath);
 	sprintf(dst,"%s.ditandai",src);
